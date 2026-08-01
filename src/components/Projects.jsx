@@ -1,11 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import {
-  ExternalLink,
-  FolderGit2,
-} from "lucide-react";
-
+import { ExternalLink, FolderGit2 } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import { projects } from "@/data/projects";
 
@@ -21,28 +17,12 @@ function ProjectCard({ project, index }) {
         ease: "easeOut",
       }}
       whileHover={{ y: -3 }}
-      className="
-        group
-        bg-white
-        border border-slate-200/90
-        rounded-2xl
-        p-6
-        shadow-2xs
-        hover:shadow-md
-        hover:border-slate-300
-        transition-[border-color,box-shadow]
-        duration-300
-        flex
-        flex-col
-        justify-between
-        min-h-[330px]
-      "
+      className="group bg-white border border-slate-200/90 rounded-2xl p-6 shadow-2xs hover:shadow-md hover:border-slate-300 transition-[border-color,box-shadow] duration-300 flex flex-col justify-between min-h-[330px]"
     >
       <div>
         {/* Top */}
         <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex items-center gap-3">
-
             {/* Project Icon */}
             <div className="w-9 h-9 rounded-lg bg-[#f8fafc] border border-slate-200 flex items-center justify-center flex-shrink-0">
               <FolderGit2
@@ -106,7 +86,6 @@ function ProjectCard({ project, index }) {
                 className="text-[11px] text-slate-500 font-medium flex items-center gap-1.5"
               >
                 <span className="w-1 h-1 rounded-full bg-slate-400 flex-shrink-0" />
-
                 {item}
               </span>
             ))}
@@ -118,16 +97,7 @@ function ProjectCard({ project, index }) {
           {project.tags.map((tag) => (
             <span
               key={tag}
-              className="
-                px-2.5
-                py-1
-                rounded-lg
-                bg-[#f8fafc]
-                border border-slate-200/80
-                text-[10.5px]
-                font-medium
-                text-slate-600
-              "
+              className="px-2.5 py-1 rounded-lg bg-[#f8fafc] border border-slate-200/80 text-[10.5px] font-medium text-slate-600"
             >
               {tag}
             </span>
@@ -137,7 +107,6 @@ function ProjectCard({ project, index }) {
 
       {/* Bottom */}
       <div className="flex items-center justify-between gap-4 pt-4 mt-6 border-t border-slate-100">
-
         {/* Small Status */}
         <div className="flex items-center gap-2">
           <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
@@ -149,33 +118,15 @@ function ProjectCard({ project, index }) {
 
         {/* Links */}
         <div className="flex items-center gap-2">
-
           {/* GitHub */}
           {project.github && (
             <a
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="
-                px-3
-                py-1.5
-                rounded-lg
-                bg-white
-                hover:bg-slate-50
-                border border-slate-200
-                text-slate-700
-                hover:text-slate-950
-                text-[11px]
-                font-medium
-                transition-all
-                duration-200
-                flex
-                items-center
-                gap-1.5
-              "
+              className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-950 text-[11px] font-medium transition-all duration-200 flex items-center gap-1.5"
             >
               <FaGithub className="w-[13px] h-[13px]" />
-
               <span>Source Code</span>
             </a>
           )}
@@ -186,21 +137,7 @@ function ProjectCard({ project, index }) {
               href={project.live}
               target="_blank"
               rel="noopener noreferrer"
-              className="
-                px-3
-                py-1.5
-                rounded-lg
-                bg-[#0b0f19]
-                hover:bg-slate-800
-                text-white
-                text-[11px]
-                font-medium
-                transition-all
-                duration-200
-                flex
-                items-center
-                gap-1.5
-              "
+              className="px-3 py-1.5 rounded-lg bg-[#0b0f19] hover:bg-slate-800 text-white text-[11px] font-medium transition-all duration-200 flex items-center gap-1.5"
             >
               <span>Live Demo</span>
 
@@ -220,21 +157,11 @@ export default function Projects() {
   return (
     <section
       id="projects"
-      className="
-        projects-section
-        pt-4
-        pb-16
-        px-4
-        sm:px-6
-        lg:px-8
-        max-w-7xl
-        mx-auto
-      "
+      className="projects-section pt-4 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
     >
       {/* Section Header */}
       <div className="flex items-end justify-between gap-6 mb-6">
         <div>
-
           <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.14em] mb-1.5">
             Featured Projects
           </p>
