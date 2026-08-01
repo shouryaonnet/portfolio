@@ -1,24 +1,55 @@
 export const projects = [
   {
-    title: "DocFind",
-    subtitle: "Medical Appointment Scheduling System",
-    description:
-      "A high-throughput backend architecture designed with Spring Boot & MySQL to process thousands of concurrent appointment bookings with strict transactional integrity.",
-    tags: ["Java", "Spring Boot", "MySQL", "Hibernate", "REST API"],
-    role: "Lead Backend Engineer",
-    duration: "3 Months",
-    live: "https://shourya.dev",
-    github: "https://github.com/shouryaonnet",
-  },
+  title: "DocFind",
+  subtitle: "Healthcare Platform",
+
+  description:
+    "A healthcare platform designed to simplify doctor discovery, appointment booking, medical report management, and access to digital healthcare services through a clean and user-friendly experience.",
+
+  tags: [
+    "React",
+    "Tailwind CSS",
+    "Node.js",
+    "MongoDB",
+    "AI",
+  ],
+
+  role: "Team Lead · Frontend Developer",
+  duration: "2025",
+
+  live: "https://shourya.dev",
+  github: "https://github.com/shouryaonnet/DocFindConsultancy",
+  highlights: [
+  "Doctor Discovery",
+  "Appointment Booking",
+  "AI Features",
+],
+},
+
   {
     title: "OpenDocs",
-    subtitle: "Real-time Collaborative Markdown Workspace",
+    subtitle: "AI Documentation Generator",
+
     description:
-      "A collaborative editor with WebSockets synchronization, live user presence indicators, and versioned markdown document state persistence.",
-    tags: ["React", "Next.js", "Node.js", "WebSockets", "MongoDB"],
-    role: "Full-Stack Engineer",
-    duration: "2 Months",
+      "An AI-powered developer tool that analyzes source code and automatically generates structured project documentation, helping developers understand and document codebases more efficiently.",
+
+    tags: [
+      "React",
+      "Node.js",
+      "Gemini AI",
+      "Vite",
+      "MongoDB",
+    ],
+
+    role: "Full-Stack Developer",
+    duration: "2026",
+
     live: "https://shourya.dev",
     github: "https://github.com/shouryaonnet",
+    highlights: [
+  "Source Analysis",
+  "AI Documentation",
+  "File Watching",
+],
   },
 ];
