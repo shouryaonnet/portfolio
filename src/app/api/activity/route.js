@@ -4,28 +4,34 @@ export async function GET() {
   let leetcodeData = null;
   let githubData = null;
 
-  // 1. Fetch LeetCode live data via GraphQL
+  /* =========================================================
+     1. LEETCODE LIVE DATA
+  ========================================================= */
+
   try {
     const res = await fetch("https://leetcode.com/graphql", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
+        "User-Agent": "Mozilla/5.0",
       },
       body: JSON.stringify({
         query: `
           query getUserProfile($username: String!) {
             matchedUser(username: $username) {
               username
+
               profile {
                 ranking
               }
+
               submitStats {
                 acSubmissionNum {
                   difficulty
                   count
                 }
               }
+
               userCalendar {
                 streak
                 totalActiveDays
@@ -34,133 +40,245 @@ export async function GET() {
             }
           }
         `,
-        variables: { username: "Shoouryya1" },
+        variables: {
+          username: "Shoouryya1",
+        },
       }),
-      next: { revalidate: 1800 },
+      next: {
+        revalidate: 1800,
+      },
     });
 
     if (res.ok) {
       const json = await res.json();
       const user = json?.data?.matchedUser;
-      if (user) {
-        const stats = user.submitStats?.acSubmissionNum || [];
-        const totalSolved = stats.find((s) => s.difficulty === "All")?.count || 502;
-        const easy = stats.find((s) => s.difficulty === "Easy")?.count || 199;
-        const medium = stats.find((s) => s.difficulty === "Medium")?.count || 271;
-        const hard = stats.find((s) => s.difficulty === "Hard")?.count || 32;
 
-        const rank = user.profile?.ranking || 12450;
+      if (user) {
+        /* -----------------------------
+           Solved Problems
+        ----------------------------- */
+
+        const stats = user.submitStats?.acSubmissionNum || [];
+
+        const totalSolved =
+          stats.find((s) => s.difficulty === "All")?.count ?? 0;
+
+        const easy = stats.find((s) => s.difficulty === "Easy")?.count ?? 0;
+
+        const medium = stats.find((s) => s.difficulty === "Medium")?.count ?? 0;
+
+        const hard = stats.find((s) => s.difficulty === "Hard")?.count ?? 0;
+
+        /* -----------------------------
+           Ranking
+        ----------------------------- */
+
+        const ranking = user.profile?.ranking ?? null;
+
+        /* -----------------------------
+           Submission Calendar
+        ----------------------------- */
+
         const calendarStr = user.userCalendar?.submissionCalendar || "{}";
-        const rawCalendar = JSON.parse(calendarStr);
+
+        let rawCalendar = {};
+
+        try {
+          rawCalendar = JSON.parse(calendarStr);
+        } catch {
+          rawCalendar = {};
+        }
 
         const dateMap = {};
-        Object.keys(rawCalendar).forEach((ts) => {
-          const dateStr = new Date(parseInt(ts) * 1000).toISOString().split("T")[0];
-          dateMap[dateStr] = rawCalendar[ts];
+
+        Object.entries(rawCalendar).forEach(([timestamp, count]) => {
+          const date = new Date(Number(timestamp) * 1000);
+
+          const dateStr = date.toISOString().split("T")[0];
+
+          dateMap[dateStr] = Number(count) || 0;
         });
 
-        // Calculate exact streak up to today or yesterday
-        let streak = 0;
-        let checkDate = new Date();
-        let todayStr = checkDate.toISOString().split("T")[0];
-        if (!dateMap[todayStr]) {
+        /* -----------------------------
+           Current Streak
+        ----------------------------- */
+
+        let currentStreak = 0;
+
+        const checkDate = new Date();
+
+        let dateStr = checkDate.toISOString().split("T")[0];
+
+        // If no submission today, start checking from yesterday.
+        if (!dateMap[dateStr]) {
           checkDate.setDate(checkDate.getDate() - 1);
         }
 
         while (true) {
-          const dStr = checkDate.toISOString().split("T")[0];
-          if (dateMap[dStr] > 0) {
-            streak++;
+          dateStr = checkDate.toISOString().split("T")[0];
+
+          if ((dateMap[dateStr] || 0) > 0) {
+            currentStreak++;
             checkDate.setDate(checkDate.getDate() - 1);
           } else {
             break;
           }
         }
 
-        // Build past 90 days grid
-        const past90Days = [];
+        /* -----------------------------
+           Past 6 Months Activity
+           182 days ≈ 6 months
+        ----------------------------- */
+
+        const past6Months = [];
+
         const now = new Date();
-        for (let i = 89; i >= 0; i--) {
-          const d = new Date(now);
-          d.setDate(d.getDate() - i);
-          const dateStr = d.toISOString().split("T")[0];
-          const count = dateMap[dateStr] || 0;
-          past90Days.push({
-            date: dateStr,
+
+        for (let i = 181; i >= 0; i--) {
+          const date = new Date(now);
+
+          date.setDate(date.getDate() - i);
+
+          const activityDate = date.toISOString().split("T")[0];
+
+          const count = dateMap[activityDate] || 0;
+
+          let level = 0;
+
+          if (count >= 9) {
+            level = 4;
+          } else if (count >= 5) {
+            level = 3;
+          } else if (count >= 2) {
+            level = 2;
+          } else if (count >= 1) {
+            level = 1;
+          }
+
+          past6Months.push({
+            date: activityDate,
             count,
-            level: count > 8 ? 4 : count > 4 ? 3 : count > 0 ? 2 : 0,
+            level,
           });
         }
 
+        /* -----------------------------
+           Final LeetCode Object
+        ----------------------------- */
+
         leetcodeData = {
-          handle: "Shoouryya1",
-          rank: rank ? `#${rank.toLocaleString()}` : "#12,450",
+          handle: user.username || "Shoouryya1",
+
+          rank: ranking ? `#${ranking.toLocaleString()}` : null,
+
           totalSolved,
           easy,
           medium,
           hard,
-          currentStreak: streak || user.userCalendar?.streak || 67,
-          totalActiveDays: user.userCalendar?.totalActiveDays || 119,
-          past90Days,
+
+          currentStreak,
+
+          totalActiveDays: user.userCalendar?.totalActiveDays ?? 0,
+
+          past6Months,
         };
       }
     }
-  } catch (err) {
-    console.error("LeetCode live API fetch error:", err);
+  } catch (error) {
+    console.error("LeetCode live API fetch error:", error);
   }
 
-  // 2. Fetch GitHub live data (5 months / ~150 days)
+  /* =========================================================
+     2. GITHUB LIVE DATA
+  ========================================================= */
+
   try {
     const res = await fetch(
       "https://github-contributions-api.jogruber.de/v4/shouryaonnet?y=last",
-      { next: { revalidate: 1800 } }
+      {
+        next: {
+          revalidate: 1800,
+        },
+      },
     );
 
     if (res.ok) {
       const json = await res.json();
+
       const contributions = json?.contributions || [];
 
-      // Slice last 150 days (5 months)
+      /* -----------------------------
+         Last 150 Days
+      ----------------------------- */
+
       const last150 = contributions.slice(-150);
-      const totalIn150 = last150.reduce((acc, c) => acc + (c.count || 0), 0);
+
+      const totalIn150 = last150.reduce(
+        (total, contribution) => total + (contribution.count || 0),
+        0,
+      );
+
+      /* -----------------------------
+         Current GitHub Streak
+      ----------------------------- */
 
       let currentStreak = 0;
+
       for (let i = last150.length - 1; i >= 0; i--) {
-        if (last150[i].count > 0) {
+        const count = last150[i]?.count || 0;
+
+        if (count > 0) {
           currentStreak++;
         } else if (i === last150.length - 1) {
+          // Allow today to have no activity yet.
           continue;
         } else {
           break;
         }
       }
 
+      /* -----------------------------
+         Final GitHub Object
+      ----------------------------- */
+
       githubData = {
         handle: "shouryaonnet",
-        totalIn150: totalIn150 || 64,
-        currentStreak: currentStreak || 14,
+        totalIn150,
+        currentStreak,
         past150Days: last150,
       };
     }
-  } catch (err) {
-    console.error("GitHub live API fetch error:", err);
+  } catch (error) {
+    console.error("GitHub live API fetch error:", error);
   }
+
+  /* =========================================================
+     RESPONSE
+  ========================================================= */
 
   return NextResponse.json({
     leetcode: leetcodeData || {
       handle: "Shoouryya1",
-      rank: "#12,450",
-      totalSolved: 502,
-      easy: 199,
-      medium: 271,
-      hard: 32,
-      currentStreak: 67,
-      totalActiveDays: 119,
+      rank: null,
+
+      totalSolved: 0,
+      easy: 0,
+      medium: 0,
+      hard: 0,
+
+      currentStreak: 0,
+      totalActiveDays: 0,
+
+      past6Months: [],
     },
+
     github: githubData || {
       handle: "shouryaonnet",
-      totalIn150: 64,
-      currentStreak: 14,
+
+      totalIn150: 0,
+      currentStreak: 0,
+
+      past150Days: [],
     },
   });
 }

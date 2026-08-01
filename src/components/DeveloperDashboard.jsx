@@ -2,6 +2,14 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CountUp from "react-countup";
+import {
+  CodeXml,
+  FolderGit2,
+  GraduationCap,
+  Route,
+  X,
+  Trophy,
+} from "lucide-react";
 
 export default function DeveloperDashboard() {
   const [leetcode, setLeetcode] = useState(null);
@@ -36,57 +44,53 @@ export default function DeveloperDashboard() {
   }, []);
 
   const cards = [
-    {
-      id: "leetcode",
-      title: "LeetCode",
-      value: loading ? "..." : `${leetcode?.totalSolved}+`,
-      subtitle: "Problems Solved",
-      icon: "🧩",
-      colorClass: "stat-slate",
-      badgeText: "↗",
-      content: <LeetCodeExpanded data={leetcode} loading={loading} />,
-    },
-    {
-      id: "projects",
-      title: "Projects",
-      value: "3+",
-      subtitle: "Featured Works",
-      icon: "📁",
-      colorClass: "stat-blue",
-      badgeText: "↗",
-      content: (
-  <ProjectsExpanded
-    onClose={() => setActiveModalIndex(null)}
-  />
-),
-    },
-    {
-      id: "education",
-      title: "Education",
-      value: "2027",
-      subtitle: "B.Tech CSE Graduation",
-      icon: "🎓",
-      colorClass: "stat-green",
-      badgeText: "↗",
-      content: <EducationExpanded />,
-    },
-    {
-      id: "journey",
-      title: "Journey",
-      value: "15+",
-      subtitle: "Technologies & Goals",
-      icon: "🔥",
-      colorClass: "stat-orange",
-      badgeText: "↗",
-      content: <JourneyExpanded />,
-    },
-  ];
+  {
+    id: "leetcode",
+    title: "LeetCode",
+    value: loading ? "..." : `${leetcode?.totalSolved}+`,
+    subtitle: "Problems Solved",
+    icon: CodeXml,
+    badgeText: "↗",
+    content: <LeetCodeExpanded data={leetcode} loading={loading} />,
+  },
+  {
+    id: "projects",
+    title: "Projects",
+    value: "3+",
+    subtitle: "Featured Works",
+    icon: FolderGit2,
+    badgeText: "↗",
+    content: (
+      <ProjectsExpanded
+        onClose={() => setActiveModalIndex(null)}
+      />
+    ),
+  },
+  {
+    id: "education",
+    title: "Education",
+    value: "2027",
+    subtitle: "B.Tech CSE Graduation",
+    icon: GraduationCap,
+    badgeText: "↗",
+    content: <EducationExpanded />,
+  },
+  {
+    id: "journey",
+    title: "Journey",
+    value: "15+",
+    subtitle: "Technologies & Goals",
+    icon: Route,
+    badgeText: "↗",
+    content: <JourneyExpanded />,
+  },
+];
 
   return (
     <section
-      id="stats"
-      className="stats-section pt-2 pb-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
-    >
+  id="stats"
+  className="stats-section pt-2 pb-14"
+>
       <div className="flex items-center justify-between mb-4">
         <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
           Developer Dashboard
@@ -105,9 +109,13 @@ export default function DeveloperDashboard() {
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-white border border-slate-200/80 text-sm flex items-center justify-center shadow-2xs">
-                  {card.icon}
-                </div>
+                <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
+  <card.icon
+    size={16}
+    strokeWidth={1.8}
+    className="text-slate-800"
+  />
+</div>
                 <h3 className="font-bold text-slate-800 text-xs tracking-wide uppercase">
                   {card.title}
                 </h3>
@@ -117,14 +125,15 @@ export default function DeveloperDashboard() {
               </span>
             </div>
 
-            <div className="mt-3.5">
-              <p className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                {card.value}
-              </p>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
-                {card.subtitle}
-              </p>
-            </div>
+            <div className="mt-3">
+  <p className="text-lg font-bold text-slate-900 tracking-tight">
+    {card.value}
+  </p>
+
+  <p className="text-[11px] text-slate-500 mt-0.5">
+    {card.subtitle}
+  </p>
+</div>
           </motion.div>
         ))}
       </div>
@@ -150,9 +159,19 @@ export default function DeveloperDashboard() {
               {/* Modal Header */}
               <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200/80 text-base flex items-center justify-center">
-                    {cards[activeModalIndex].icon}
-                  </div>
+                  <div className="w-9 h-9 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
+  {(() => {
+    const Icon = cards[activeModalIndex].icon;
+
+    return (
+      <Icon
+        size={17}
+        strokeWidth={1.8}
+        className="text-slate-900"
+      />
+    );
+  })()}
+</div>
                   <div>
                     <h3 className="font-extrabold text-slate-900 text-base sm:text-lg">
                       {cards[activeModalIndex].title} Details
@@ -164,12 +183,12 @@ export default function DeveloperDashboard() {
                 </div>
 
                 <button
-                  onClick={() => setActiveModalIndex(null)}
-                  className="w-9 h-9 rounded-xl bg-[#f1f3f7] hover:bg-slate-800 text-slate-700 hover:text-white font-bold text-xs flex items-center justify-center transition-colors cursor-pointer border border-slate-200/60"
-                  aria-label="Close modal"
-                >
-                  ✕
-                </button>
+  onClick={() => setActiveModalIndex(null)}
+  className="w-9 h-9 rounded-xl bg-[#f1f3f7] hover:bg-slate-800 text-slate-700 hover:text-white font-bold text-xs flex items-center justify-center transition-colors cursor-pointer border border-slate-200/60"
+  aria-label="Close modal"
+>
+  ✕
+</button>
               </div>
 
               {/* Modal Body */}
@@ -197,10 +216,13 @@ function LeetCodeExpanded({ data, loading }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-      {/* Donut Chart */}
-      <div className="lg:col-span-5 flex flex-col sm:flex-row items-center justify-center gap-5 bg-[#f8fafc] p-5 rounded-2xl border border-slate-200/80">
+
+      {/* Donut */}
+      <div className="lg:col-span-5 flex flex-col sm:flex-row items-center justify-center gap-6 bg-[#f8fafc] p-5 rounded-2xl border border-slate-200/80">
+
         <div className="relative w-32 h-32 flex items-center justify-center flex-shrink-0">
           <svg className="w-full h-full" viewBox="0 0 100 100">
+
             {/* Background */}
             <circle
               cx="50"
@@ -211,6 +233,7 @@ function LeetCodeExpanded({ data, loading }) {
               fill="transparent"
             />
 
+            {/* Easy */}
             <motion.circle
               cx="50"
               cy="50"
@@ -218,7 +241,7 @@ function LeetCodeExpanded({ data, loading }) {
               stroke="#10b981"
               strokeWidth="8"
               fill="transparent"
-              strokeDasharray={`${easyArc} ${CIRCUMFERENCE}`}
+              strokeLinecap="butt"
               transform="rotate(-90 50 50)"
               initial={{
                 strokeDasharray: `0 ${CIRCUMFERENCE}`,
@@ -231,6 +254,8 @@ function LeetCodeExpanded({ data, loading }) {
                 ease: "easeOut",
               }}
             />
+
+            {/* Medium */}
             <motion.circle
               cx="50"
               cy="50"
@@ -238,8 +263,10 @@ function LeetCodeExpanded({ data, loading }) {
               stroke="#f59e0b"
               strokeWidth="8"
               fill="transparent"
-              strokeDasharray={`${mediumArc} ${CIRCUMFERENCE}`}
-              transform={`rotate(${(easyArc / CIRCUMFERENCE) * 360 - 90} 50 50)`}
+              strokeLinecap="butt"
+              transform={`rotate(${
+                (easyArc / CIRCUMFERENCE) * 360 - 90
+              } 50 50)`}
               initial={{
                 strokeDasharray: `0 ${CIRCUMFERENCE}`,
               }}
@@ -252,6 +279,7 @@ function LeetCodeExpanded({ data, loading }) {
                 ease: "easeOut",
               }}
             />
+
             {/* Hard */}
             <motion.circle
               cx="50"
@@ -260,8 +288,10 @@ function LeetCodeExpanded({ data, loading }) {
               stroke="#ef4444"
               strokeWidth="8"
               fill="transparent"
-              strokeDasharray={`${hardArc} ${CIRCUMFERENCE}`}
-              transform={`rotate(${((easyArc + mediumArc) / CIRCUMFERENCE) * 360 - 90} 50 50)`}
+              strokeLinecap="butt"
+              transform={`rotate(${
+                ((easyArc + mediumArc) / CIRCUMFERENCE) * 360 - 90
+              } 50 50)`}
               initial={{
                 strokeDasharray: `0 ${CIRCUMFERENCE}`,
               }}
@@ -276,8 +306,9 @@ function LeetCodeExpanded({ data, loading }) {
             />
           </svg>
 
-          <div className="absolute flex flex-col items-center">
-            <span className="text-xl font-extrabold text-slate-900">
+          {/* Center */}
+          <div className="absolute flex flex-col items-center justify-center">
+            <span className="text-lg font-bold text-slate-900 leading-none">
               {loading ? (
                 "..."
               ) : (
@@ -287,7 +318,7 @@ function LeetCodeExpanded({ data, loading }) {
               )}
             </span>
 
-            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+            <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider mt-1">
               Solved
             </span>
           </div>
@@ -295,12 +326,16 @@ function LeetCodeExpanded({ data, loading }) {
 
         {/* Difficulty */}
         <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
 
             <div>
-              <p className="text-xs text-slate-500">Easy</p>
-              <p className="text-sm font-extrabold text-slate-900">
+              <p className="text-[10px] text-slate-400 leading-none">
+                Easy
+              </p>
+
+              <p className="text-xs font-bold text-slate-900 mt-1">
                 {loading ? (
                   "..."
                 ) : (
@@ -310,12 +345,15 @@ function LeetCodeExpanded({ data, loading }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
 
             <div>
-              <p className="text-xs text-slate-500">Medium</p>
-              <p className="text-sm font-extrabold text-slate-900">
+              <p className="text-[10px] text-slate-400 leading-none">
+                Medium
+              </p>
+
+              <p className="text-xs font-bold text-slate-900 mt-1">
                 {loading ? (
                   "..."
                 ) : (
@@ -325,12 +363,15 @@ function LeetCodeExpanded({ data, loading }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0" />
 
             <div>
-              <p className="text-xs text-slate-500">Hard</p>
-              <p className="text-sm font-extrabold text-slate-900">
+              <p className="text-[10px] text-slate-400 leading-none">
+                Hard
+              </p>
+
+              <p className="text-xs font-bold text-slate-900 mt-1">
                 {loading ? (
                   "..."
                 ) : (
@@ -339,85 +380,112 @@ function LeetCodeExpanded({ data, loading }) {
               </p>
             </div>
           </div>
+
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Right Side */}
       <div className="lg:col-span-7 flex flex-col gap-4">
+
+        {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+
+          {/* Global Rank */}
           <div className="p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl">
-            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+            <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider">
               Global Rank
             </span>
-            <p className="text-sm font-extrabold text-slate-900 mt-0.5">
+
+            <p className="text-xs font-bold text-slate-900 mt-1">
               {loading ? "..." : data?.rank}
             </p>
           </div>
 
+          {/* Current Streak */}
           <div className="p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl">
-            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+            <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider">
               Current Streak
             </span>
-            <p className="text-sm font-extrabold text-slate-900 mt-0.5">
+
+            <p className="text-xs font-bold text-emerald-600 mt-1">
               {loading ? "..." : `${data?.currentStreak} Days`}
             </p>
           </div>
 
+          {/* Active Days */}
           <div className="p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl">
-            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+            <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider">
               Active Days
             </span>
-            <p className="text-sm font-extrabold text-slate-900 mt-0.5">
+
+            <p className="text-xs font-bold text-slate-900 mt-1">
               {loading ? "..." : data?.totalActiveDays}
             </p>
           </div>
 
+          {/* Solving Since */}
           <div className="p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl">
-            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+            <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider">
               Solving Since
             </span>
-            <p className="text-sm font-extrabold text-slate-900 mt-0.5">2026</p>
-          </div>
 
-          <div className="p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl">
-            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
-              Primary Language
-            </span>
-            <p className="text-sm font-extrabold text-slate-900 mt-0.5">Java</p>
-          </div>
-
-          <div className="p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl">
-            <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
-              Status
-            </span>
-            <p className="text-sm font-extrabold text-emerald-600 mt-0.5">
-              Actively Solving
+            <p className="text-xs font-bold text-slate-900 mt-1">
+              2026
             </p>
           </div>
+
+          {/* Primary Language */}
+          <div className="p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl">
+            <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider">
+              Primary Language
+            </span>
+
+            <p className="text-xs font-bold text-slate-900 mt-1">
+              Java
+            </p>
+          </div>
+
+          {/* Status */}
+          <div className="p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl">
+            <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider">
+              Status
+            </span>
+
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-ping" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              </span>
+
+              <p className="text-xs font-bold text-emerald-600">
+                Actively Solving
+              </p>
+            </div>
+          </div>
+
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-slate-100 pt-3 mt-2">
-          <div className="text-xs text-slate-500">
-            <span className="font-medium">Handle:</span>{" "}
-            <a
-              href={`https://leetcode.com/u/${data?.handle}/`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold text-slate-700 hover:text-slate-900 transition-colors"
-            >
-              @{data?.handle}
-            </a>
-          </div>
+        <div className="flex items-center justify-between border-t border-slate-100 pt-3 mt-1">
 
           <a
             href={`https://leetcode.com/u/${data?.handle}/`}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2 rounded-xl bg-[#0b0f19] hover:bg-slate-800 text-white font-semibold text-xs transition-all duration-200 flex items-center gap-1.5"
+            className="text-[10px] font-medium text-slate-500 hover:text-slate-900 transition-colors"
           >
-            View Profile ↗
+            @{data?.handle}
           </a>
+
+          <a
+            href={`https://leetcode.com/u/${data?.handle}/`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-1.5 rounded-lg bg-[#0b0f19] hover:bg-slate-800 text-white font-semibold text-[10px] transition-all duration-200"
+          >
+            View LeetCode ↗
+          </a>
+
         </div>
       </div>
     </div>
@@ -876,9 +944,14 @@ function JourneyExpanded() {
                       </h4>
 
                       {isAchievement && (
-                        <span className="px-2 py-0.5 rounded-md bg-amber-50 border border-amber-100 text-[8px] font-bold text-amber-700 uppercase tracking-wider whitespace-nowrap">
-                          🏆 2× Runner-Up
-                        </span>
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-[8px] font-semibold text-slate-600 uppercase tracking-wider whitespace-nowrap">
+  <Trophy
+    size={10}
+    strokeWidth={1.8}
+    className="text-slate-700"
+  />
+  2× Runner-Up
+</span>
                       )}
 
                       {isCurrent && (

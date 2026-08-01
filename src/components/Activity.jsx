@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { FaGithub } from "react-icons/fa";
+import { SiLeetcode } from "react-icons/si";
 
 export default function Activity() {
   const [data, setData] = useState(null);
@@ -31,7 +33,7 @@ export default function Activity() {
     medium: 271,
     hard: 32,
     currentStreak: 67,
-    past90Days: [],
+    
   };
 
   const github = data?.github || {
@@ -42,7 +44,10 @@ export default function Activity() {
   };
 
   return (
-    <section id="activity" className="pt-6 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto select-none">
+    <section
+  id="activity"
+  className="activity-section pt-6 pb-16 px-4 sm:px-6 lg:px-8 mx-auto select-none"
+>
       {/* Section Header */}
       <div className="flex items-center justify-between mb-4">
         <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
@@ -53,182 +58,313 @@ export default function Activity() {
         </span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch w-full">
         {/* LEFT SIDE: GitHub Card (5 Months Activity) */}
-        <div className="lg:col-span-6 rounded-2xl border border-slate-200/80 bg-[#f8fafc] p-6 shadow-2xs hover:shadow-xs transition-shadow flex flex-col justify-between">
-          <div>
-            {/* Top Bar */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">🐙</span>
-                <h3 className="text-base font-extrabold text-slate-900 tracking-tight">GitHub</h3>
-                <a
-                  href={`https://github.com/${github.handle}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-mono font-semibold text-slate-500 hover:text-slate-900 transition-colors"
-                >
-                  @{github.handle} ↗
-                </a>
-              </div>
+       {/* LEFT SIDE: GitHub Card */}
+{/* LEFT SIDE: GitHub Card */}
+<div className="lg:col-span-6 rounded-2xl border border-slate-200/80 bg-[#f8fafc] p-6 shadow-2xs hover:shadow-xs transition-shadow flex flex-col justify-between">
+  <div>
+    {/* Header */}
+    <div className="flex items-center justify-between mb-7">
+      <div className="flex items-center gap-2.5">
+        <FaGithub className="text-[22px] text-slate-950 flex-shrink-0" />
 
-              {/* Streak Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0b0f19] text-white text-xs font-bold shadow-2xs">
-                <span>🔥</span>
-                <span>{loading ? "..." : `${github.currentStreak} Days`}</span>
-                <span className="text-[10px] font-mono text-emerald-400 uppercase tracking-wider ml-0.5">
-                  Commit Streak
-                </span>
-              </div>
-            </div>
+        <div className="flex items-center gap-2">
+          <h3 className="text-base font-extrabold text-slate-900 tracking-tight">
+            GitHub
+          </h3>
 
-            {/* Sub Stats Bar */}
-            <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-slate-200/60">
-              <span className="text-sm font-extrabold text-slate-900">
-                {loading ? "..." : `${github.totalIn150} Commits`}
-              </span>
-              <span className="text-xs font-medium text-slate-500 font-mono">
-                Past 5 Months (150 Days)
-              </span>
-            </div>
-
-            {/* 5 Months Grid (21 Columns x 7 Rows = 147 Cells) */}
-            <GitHubHeatmap days={github.past150Days} />
-          </div>
-
-          {/* Footer CTA Button */}
-          <div className="flex items-center justify-between mt-5 pt-3.5 border-t border-slate-200/60">
-            <span className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Synced Live
-            </span>
-
-            <a
-              href={`https://github.com/${github.handle}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2 rounded-xl bg-[#0b0f19] hover:bg-slate-800 text-white font-semibold text-xs transition-all shadow-md flex items-center gap-1.5 group cursor-pointer"
-            >
-              <span>View Profile</span>
-              <span className="transition-transform duration-200 group-hover:translate-x-0.5">
-                ↗
-              </span>
-            </a>
-          </div>
+          <a
+            href={`https://github.com/${github.handle}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-mono font-semibold text-slate-500 hover:text-slate-900 transition-colors"
+          >
+            @{github.handle} ↗
+          </a>
         </div>
+      </div>
+
+      <div className="flex items-center gap-1.5">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50 animate-ping" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+        </span>
+
+        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+          Live
+        </span>
+      </div>
+    </div>
+
+    {/* Activity Heading */}
+    <div className="flex items-center justify-between mb-4">
+      <div>
+        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+          Coding Activity
+        </p>
+
+        <p className="text-[10px] text-slate-400 mt-0.5">
+          Recent GitHub contributions
+        </p>
+      </div>
+
+      <span className="text-[10px] font-mono font-medium text-slate-400">
+        Past 5 Months
+      </span>
+    </div>
+
+    {/* Heatmap */}
+    <GitHubHeatmap
+      days={github.past150Days}
+      loading={loading}
+    />
+  </div>
+
+  {/* Footer */}
+  <div className="flex items-center justify-between mt-6 pt-3.5 border-t border-slate-200/60">
+    <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1.5">
+      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+      Synced from GitHub
+    </span>
+
+    <a
+  href={`https://github.com/${github.handle}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="px-3.5 py-1.5 rounded-xl bg-[#0b0f19] hover:bg-slate-800 text-white font-semibold text-[10px] transition-all duration-200 flex items-center gap-1.5 group"
+>
+  <span>View GitHub</span>
+
+  <span className="transition-transform duration-200 group-hover:translate-x-0.5">
+    ↗
+  </span>
+</a>
+  </div>
+</div>
 
         {/* RIGHT SIDE: LeetCode Card (Rank, Solved breakdown on Left | Streak & Heatmap on Right) */}
-        <div className="lg:col-span-6 rounded-2xl border border-slate-200/80 bg-[#f8fafc] p-6 shadow-2xs hover:shadow-xs transition-shadow flex flex-col justify-between">
-          <div>
-            {/* Top Bar */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">🧩</span>
-                <h3 className="text-base font-extrabold text-slate-900 tracking-tight">LeetCode</h3>
-                <a
-                  href={`https://leetcode.com/u/${leetcode.handle}/`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-mono font-semibold text-slate-500 hover:text-slate-900 transition-colors"
-                >
-                  @{leetcode.handle} ↗
-                </a>
-              </div>
+      {/* RIGHT SIDE: LeetCode Card */}
+<div className="lg:col-span-6 rounded-2xl border border-slate-200/80 bg-[#f8fafc] p-6 shadow-2xs hover:shadow-xs transition-shadow flex flex-col justify-between">
+  <div>
+    {/* Header */}
+    <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center gap-2.5">
+        <SiLeetcode className="text-[21px] text-slate-950 flex-shrink-0" />
 
-              {/* Streak Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0b0f19] text-white text-xs font-bold shadow-2xs">
-                <span>🔥</span>
-                <span>{loading ? "..." : `${leetcode.currentStreak} Days`}</span>
-                <span className="text-[10px] font-mono text-emerald-400 uppercase tracking-wider ml-0.5">
-                  Live Streak
-                </span>
-              </div>
-            </div>
+        <div className="flex items-center gap-2">
+          <h3 className="text-sm font-extrabold text-slate-900 tracking-tight">
+            LeetCode
+          </h3>
 
-            {/* Split Card Content: Left stats breakdown, Right heatmap grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-center pb-2">
-              {/* Left Column of LeetCode Card: Rank & Difficulties */}
-              <div className="sm:col-span-5 flex flex-col gap-3">
-                <div>
-                  <span className="text-[11px] font-mono font-semibold text-slate-400 uppercase tracking-wider">
-                    Global Ranking
-                  </span>
-                  <p className="text-sm font-extrabold text-slate-900">{leetcode.rank}</p>
-                </div>
-
-                <div>
-                  <span className="text-[11px] font-mono font-semibold text-slate-400 uppercase tracking-wider">
-                    Problems Solved
-                  </span>
-                  <p className="text-xl font-black text-slate-900">{leetcode.totalSolved}</p>
-                </div>
-
-                {/* Difficulty Badges */}
-                <div className="flex flex-col gap-1.5 mt-1">
-                  <div className="flex items-center justify-between text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-50/80 border border-emerald-200/60 text-emerald-800">
-                    <span>Easy</span>
-                    <span className="font-mono">{leetcode.easy}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs font-semibold px-2.5 py-1 rounded-lg bg-amber-50/80 border border-amber-200/60 text-amber-800">
-                    <span>Medium</span>
-                    <span className="font-mono">{leetcode.medium}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs font-semibold px-2.5 py-1 rounded-lg bg-rose-50/80 border border-rose-200/60 text-rose-800">
-                    <span>Hard</span>
-                    <span className="font-mono">{leetcode.hard}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column of LeetCode Card: Heatmap Grid (3 Months) */}
-              <div className="sm:col-span-7 flex flex-col items-center sm:items-end w-full">
-                <LeetCodeHeatmap days={leetcode.past90Days} />
-              </div>
-            </div>
-          </div>
-
-          {/* Footer CTA Button */}
-          <div className="flex items-center justify-between mt-5 pt-3.5 border-t border-slate-200/60">
-            <span className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Synced Live
-            </span>
-
-            <a
-              href={`https://leetcode.com/u/${leetcode.handle}/`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2 rounded-xl bg-[#0b0f19] hover:bg-slate-800 text-white font-semibold text-xs transition-all shadow-md flex items-center gap-1.5 group cursor-pointer"
-            >
-              <span>View Profile</span>
-              <span className="transition-transform duration-200 group-hover:translate-x-0.5">
-                ↗
-              </span>
-            </a>
-          </div>
+          <a
+            href={`https://leetcode.com/u/${leetcode.handle}/`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] font-mono font-semibold text-slate-500 hover:text-slate-900 transition-colors"
+          >
+            @{leetcode.handle} ↗
+          </a>
         </div>
+      </div>
+
+      {/* Live */}
+      <div className="flex items-center gap-1.5">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50 animate-ping" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+        </span>
+
+        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+          Live
+        </span>
+      </div>
+    </div>
+
+    {/* Activity Heading */}
+    <div className="flex items-center justify-between mb-3">
+      <div>
+        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">
+          Problem Solving Activity
+        </p>
+
+        <p className="text-[10px] text-slate-400 mt-0.5">
+          Recent LeetCode submissions
+        </p>
+      </div>
+
+      <span className="text-[9px] font-mono font-medium text-slate-400">
+        Past 6 Months
+      </span>
+    </div>
+
+    {/* Heatmap */}
+    <LeetCodeHeatmap
+      days={leetcode.past6Months}
+      loading={loading}
+    />
+
+    {/* Current Streak */}
+    <div className="flex items-center justify-between py-3 mt-3 border-y border-slate-200/70">
+      <div className="flex items-center gap-2">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-40 animate-ping" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+        </span>
+
+        <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">
+          Current Streak
+        </span>
+      </div>
+
+      <span className="text-xs font-extrabold text-emerald-600">
+        {loading ? "..." : `${leetcode.currentStreak} Days`}
+      </span>
+    </div>
+
+    {/* Difficulty Breakdown */}
+    <div className="mt-3">
+      <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider mb-2.5">
+        Solved by Difficulty
+      </p>
+
+      <div className="grid grid-cols-3 divide-x divide-slate-200">
+        {/* Easy */}
+        <div className="pr-4">
+          <p className="text-[9px] text-slate-400 font-medium">
+            Easy
+          </p>
+
+          <p className="text-sm font-extrabold text-slate-900 mt-0.5">
+            {loading ? "..." : leetcode.easy}
+          </p>
+        </div>
+
+        {/* Medium */}
+        <div className="px-4">
+          <p className="text-[9px] text-slate-400 font-medium">
+            Medium
+          </p>
+
+          <p className="text-sm font-extrabold text-slate-900 mt-0.5">
+            {loading ? "..." : leetcode.medium}
+          </p>
+        </div>
+
+        {/* Hard */}
+        <div className="pl-4">
+          <p className="text-[9px] text-slate-400 font-medium">
+            Hard
+          </p>
+
+          <p className="text-sm font-extrabold text-slate-900 mt-0.5">
+            {loading ? "..." : leetcode.hard}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Footer */}
+  <div className="flex items-center justify-between mt-5 pt-3.5 border-t border-slate-200/60">
+    <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1.5">
+      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+      Synced from LeetCode
+    </span>
+
+    <a
+      href={`https://leetcode.com/u/${leetcode.handle}/`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="px-3.5 py-1.5 rounded-xl bg-[#0b0f19] hover:bg-slate-800 text-white font-semibold text-[10px] transition-all duration-200 flex items-center gap-1.5 group"
+    >
+      <span>View LeetCode</span>
+
+      <span className="transition-transform duration-200 group-hover:translate-x-0.5">
+        ↗
+      </span>
+    </a>
+  </div>
+</div>
       </div>
     </section>
   );
 }
 
 /* GitHub Heatmap (5 Months Grid: 21 columns x 7 rows) */
-function GitHubHeatmap({ days = [] }) {
+function GitHubHeatmap({ days = [], loading = false }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const months = ["Mar", "Apr", "May", "Jun", "Jul"];
 
-  const cells = days.length
-    ? days.slice(-147)
-    : Array.from({ length: 147 }, (_, i) => ({
-      date: `Day ${i + 1}`,
-      count: Math.random() > 0.4 ? Math.ceil(Math.random() * 4) : 0,
-    }));
+  const cells = days.slice(-147);
+
+  const formatMonth = (date) => {
+    if (!date) return "";
+
+    return new Date(`${date}T00:00:00`).toLocaleDateString("en-US", {
+      month: "short",
+    });
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+
+    return new Date(`${date}T00:00:00`).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const monthLabels = [];
+
+  cells.forEach((day, index) => {
+    if (!day.date) return;
+
+    const month = formatMonth(day.date);
+
+    if (
+      index === 0 ||
+      month !== formatMonth(cells[index - 1]?.date)
+    ) {
+      monthLabels.push({
+        month,
+        index,
+      });
+    }
+  });
+
+  if (loading) {
+    return (
+      <div className="w-full">
+        <div className="grid grid-flow-col grid-rows-7 gap-1">
+          {Array.from({ length: 147 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="w-3 h-3 rounded-xs bg-slate-200/70 animate-pulse"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!cells.length) {
+    return (
+      <div className="h-[110px] flex items-center justify-center rounded-xl border border-dashed border-slate-200">
+        <span className="text-[11px] text-slate-400 font-medium">
+          GitHub activity unavailable
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
-      <div className="grid grid-flow-col grid-rows-7 gap-1 overflow-x-auto pb-2">
+      {/* Heatmap */}
+      <div className="grid grid-flow-col grid-rows-7 gap-1 pb-2">
         {cells.map((day, idx) => {
           const count = day.count || 0;
+
           let bgClass = "bg-slate-200/60";
 
           if (count > 6) bgClass = "bg-[#216e39]";
@@ -238,14 +374,15 @@ function GitHubHeatmap({ days = [] }) {
 
           return (
             <div
-              key={idx}
+              key={`${day.date}-${idx}`}
               onMouseEnter={() => setHoveredIndex(idx)}
               onMouseLeave={() => setHoveredIndex(null)}
-              className={`w-3 h-3 rounded-xs ${bgClass} relative cursor-pointer transition-transform hover:scale-125`}
+              className={`w-3 h-3 rounded-xs ${bgClass} relative cursor-pointer transition-transform duration-150 hover:scale-125`}
             >
               {hoveredIndex === idx && (
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2.5 py-1 bg-slate-950 text-white text-[10px] rounded-lg font-mono whitespace-nowrap z-30 shadow-md pointer-events-none">
-                  {day.date}: {count} commits
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-slate-950 text-white text-[10px] rounded-lg font-mono whitespace-nowrap z-30 shadow-md pointer-events-none">
+                  {formatDate(day.date)} · {count}{" "}
+                  {count === 1 ? "contribution" : "contributions"}
                 </div>
               )}
             </div>
@@ -253,10 +390,18 @@ function GitHubHeatmap({ days = [] }) {
         })}
       </div>
 
-      {/* Month Labels underneath */}
-      <div className="flex justify-between text-[11px] font-mono text-slate-400 mt-1.5 px-1">
-        {months.map((m) => (
-          <span key={m}>{m}</span>
+      {/* Month Labels */}
+      <div className="relative h-5 mt-1">
+        {monthLabels.map(({ month, index }) => (
+          <span
+            key={`${month}-${index}`}
+            className="absolute text-[10px] font-mono text-slate-400"
+            style={{
+              left: `${(index / cells.length) * 100}%`,
+            }}
+          >
+            {month}
+          </span>
         ))}
       </div>
     </div>
@@ -264,39 +409,102 @@ function GitHubHeatmap({ days = [] }) {
 }
 
 /* LeetCode Heatmap (3 Months Grid: 13 columns x 7 rows) */
-function LeetCodeHeatmap({ days = [] }) {
+function LeetCodeHeatmap({ days = [], loading = false }) {
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const months = ["May", "Jun", "Jul"];
 
-  const cells = days.length
-    ? days.slice(-91)
-    : Array.from({ length: 91 }, (_, i) => ({
-      date: `Day ${i + 1}`,
-      count: Math.random() > 0.3 ? Math.ceil(Math.random() * 5) : 0,
-    }));
+  const cells = days.slice(-182);
+
+  const formatMonth = (date) => {
+    if (!date) return "";
+
+    return new Date(`${date}T00:00:00`).toLocaleDateString("en-US", {
+      month: "short",
+    });
+  };
+
+  const formatDate = (date) => {
+    if (!date) return "";
+
+    return new Date(`${date}T00:00:00`).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  const monthLabels = [];
+
+  cells.forEach((day, index) => {
+    if (!day.date) return;
+
+    const month = formatMonth(day.date);
+
+    if (
+      index === 0 ||
+      month !== formatMonth(cells[index - 1]?.date)
+    ) {
+      monthLabels.push({
+        month,
+        index,
+      });
+    }
+  });
+
+  if (loading) {
+    return (
+      <div className="w-full">
+        <div className="grid grid-flow-col grid-rows-7 gap-1">
+          {Array.from({ length: 182 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="w-3 h-3 rounded-xs bg-slate-200/70 animate-pulse"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!cells.length) {
+    return (
+      <div className="h-[90px] flex items-center justify-center rounded-xl border border-dashed border-slate-200">
+        <span className="text-[10px] text-slate-400 font-medium">
+          LeetCode activity unavailable
+        </span>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="grid grid-flow-col grid-rows-7 gap-1 overflow-x-auto pb-1">
+    <div className="w-full">
+      {/* Heatmap */}
+      <div className="grid grid-flow-col grid-rows-7 gap-1 pb-2">
         {cells.map((day, idx) => {
           const count = day.count || 0;
-          let bgClass = "bg-slate-200/80";
 
-          if (count > 8) bgClass = "bg-emerald-600";
-          else if (count > 4) bgClass = "bg-emerald-500";
-          else if (count > 2) bgClass = "bg-emerald-400";
-          else if (count > 0) bgClass = "bg-emerald-300";
+          let bgClass = "bg-slate-200/60";
+
+          if (count >= 9) {
+            bgClass = "bg-emerald-800";
+          } else if (count >= 5) {
+            bgClass = "bg-emerald-600";
+          } else if (count >= 2) {
+            bgClass = "bg-emerald-400";
+          } else if (count >= 1) {
+            bgClass = "bg-emerald-200";
+          }
 
           return (
             <div
-              key={idx}
+              key={`${day.date}-${idx}`}
               onMouseEnter={() => setHoveredIndex(idx)}
               onMouseLeave={() => setHoveredIndex(null)}
-              className={`w-3.5 h-3.5 rounded-sm ${bgClass} relative cursor-pointer transition-transform hover:scale-125`}
+              className={`w-3 h-3 rounded-xs ${bgClass} relative cursor-pointer transition-transform duration-150 hover:scale-125`}
             >
               {hoveredIndex === idx && (
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2.5 py-1 bg-slate-950 text-white text-[10px] rounded-lg font-mono whitespace-nowrap z-30 shadow-md pointer-events-none">
-                  {day.date}: {count} submissions
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-slate-950 text-white text-[9px] rounded-lg font-mono whitespace-nowrap z-30 shadow-md pointer-events-none">
+                  {formatDate(day.date)} · {count}{" "}
+                  {count === 1 ? "submission" : "submissions"}
                 </div>
               )}
             </div>
@@ -304,10 +512,18 @@ function LeetCodeHeatmap({ days = [] }) {
         })}
       </div>
 
-      {/* Month Labels underneath matching screenshot */}
-      <div className="flex justify-between w-full text-[11px] font-mono text-slate-500 mt-2 px-2">
-        {months.map((m) => (
-          <span key={m}>{m}</span>
+      {/* Month Labels */}
+      <div className="relative h-4 mt-1">
+        {monthLabels.map(({ month, index }) => (
+          <span
+            key={`${month}-${index}`}
+            className="absolute text-[9px] font-mono text-slate-400"
+            style={{
+              left: `${(index / cells.length) * 100}%`,
+            }}
+          >
+            {month}
+          </span>
         ))}
       </div>
     </div>
