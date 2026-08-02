@@ -1,13 +1,14 @@
 "use client";
+
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import CountUp from "react-countup";
+
 import {
   CodeXml,
   FolderGit2,
   GraduationCap,
   Route,
-  X,
   Trophy,
 } from "lucide-react";
 
@@ -15,15 +16,48 @@ export default function DeveloperDashboard() {
   const [leetcode, setLeetcode] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeModalIndex, setActiveModalIndex] = useState(null);
+  const [heroFinished, setHeroFinished] = useState(false);
 
-  // Close modal on Escape key
+  const shouldReduceMotion = useReducedMotion();
+
+  /* ================================
+     HERO FINISHED
+  ================================ */
+
+  useEffect(() => {
+    function handleHeroComplete() {
+      setHeroFinished(true);
+    }
+
+    window.addEventListener("hero-animation-complete", handleHeroComplete);
+
+    return () => {
+      window.removeEventListener("hero-animation-complete", handleHeroComplete);
+    };
+  }, []);
+
+  /* ================================
+     ESCAPE KEY → CLOSE MODAL
+  ================================ */
+
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") setActiveModalIndex(null);
+      if (e.key === "Escape") {
+        setActiveModalIndex(null);
+      }
     };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
+
+  /* ================================
+     FETCH LEETCODE DATA
+  ================================ */
+
   useEffect(() => {
     async function fetchLeetcode() {
       try {
@@ -43,156 +77,474 @@ export default function DeveloperDashboard() {
     fetchLeetcode();
   }, []);
 
+  /* ================================
+     DASHBOARD CARDS
+  ================================ */
+
   const cards = [
-  {
-    id: "leetcode",
-    title: "LeetCode",
-    value: loading ? "..." : `${leetcode?.totalSolved}+`,
-    subtitle: "Problems Solved",
-    icon: CodeXml,
-    badgeText: "↗",
-    content: <LeetCodeExpanded data={leetcode} loading={loading} />,
-  },
-  {
-    id: "projects",
-    title: "Projects",
-    value: "3+",
-    subtitle: "Featured Works",
-    icon: FolderGit2,
-    badgeText: "↗",
-    content: (
-      <ProjectsExpanded
-        onClose={() => setActiveModalIndex(null)}
-      />
-    ),
-  },
-  {
-    id: "education",
-    title: "Education",
-    value: "2027",
-    subtitle: "B.Tech CSE Graduation",
-    icon: GraduationCap,
-    badgeText: "↗",
-    content: <EducationExpanded />,
-  },
-  {
-    id: "journey",
-    title: "Journey",
-    value: "15+",
-    subtitle: "Technologies & Goals",
-    icon: Route,
-    badgeText: "↗",
-    content: <JourneyExpanded />,
-  },
-];
+    {
+      id: "leetcode",
+      title: "LeetCode",
+      value: loading ? "..." : `${leetcode?.totalSolved}+`,
+      subtitle: "Problems Solved",
+      icon: CodeXml,
+      badgeText: "↗",
+      content: <LeetCodeExpanded data={leetcode} loading={loading} />,
+    },
+    {
+      id: "projects",
+      title: "Projects",
+      value: "3+",
+      subtitle: "Featured Works",
+      icon: FolderGit2,
+      badgeText: "↗",
+      content: <ProjectsExpanded onClose={() => setActiveModalIndex(null)} />,
+    },
+    {
+      id: "education",
+      title: "Education",
+      value: "2027",
+      subtitle: "B.Tech CSE Graduation",
+      icon: GraduationCap,
+      badgeText: "↗",
+      content: <EducationExpanded />,
+    },
+    {
+      id: "journey",
+      title: "Journey",
+      value: "15+",
+      subtitle: "Technologies & Goals",
+      icon: Route,
+      badgeText: "↗",
+      content: <JourneyExpanded />,
+    },
+  ];
 
   return (
-    <section
-  id="stats"
-  className="stats-section pt-2 pb-14"
->
-      <div className="flex items-center justify-between mb-4">
+    <section id="stats" className="stats-section mt-10 mb-10">
+      {/* ================================
+          SECTION HEADING
+      ================================= */}
+
+      <motion.div
+        initial={
+          shouldReduceMotion
+            ? false
+            : {
+                opacity: 0,
+                y: 12,
+              }
+        }
+        animate={
+          heroFinished || shouldReduceMotion
+            ? {
+                opacity: 1,
+                y: 0,
+              }
+            : {
+                opacity: 0,
+                y: 12,
+              }
+        }
+        transition={{
+          duration: 0.4,
+          delay: heroFinished ? 0.05 : 0,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        className="flex items-center justify-between mb-4"
+      >
         <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
           Developer Dashboard
         </p>
-      </div>
+      </motion.div>
 
-      {/* Collapsed Cards Grid (Compact sizing, small stats numbers) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {cards.map((card, i) => (
-          <motion.div
-            key={card.id}
-            whileHover={{ y: -3, transition: { duration: 0.15 } }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setActiveModalIndex(i)}
-            className="rounded-2xl border border-slate-200/80 bg-[#f8fafc] p-4.5 shadow-2xs hover:shadow-xs transition-all cursor-pointer group relative overflow-hidden"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
-  <card.icon
-    size={16}
-    strokeWidth={1.8}
-    className="text-slate-800"
-  />
-</div>
-                <h3 className="font-bold text-slate-800 text-xs tracking-wide uppercase">
-                  {card.title}
-                </h3>
+      {/* ================================
+          DASHBOARD CARDS
+      ================================= */}
+
+      <div
+        className="
+          grid
+          grid-cols-1
+          sm:grid-cols-2
+          lg:grid-cols-4
+          gap-4
+        "
+      >
+        {cards.map((card, i) => {
+          const Icon = card.icon;
+
+          // First 2 cards enter from left.
+          // Last 2 cards enter from right.
+          const fromLeft = i < 2;
+
+          return (
+            <motion.div
+              key={card.id}
+              initial={
+                shouldReduceMotion
+                  ? false
+                  : {
+                      opacity: 0,
+                      x: fromLeft ? -55 : 55,
+                      scale: 0.97,
+                    }
+              }
+              animate={
+                heroFinished || shouldReduceMotion
+                  ? {
+                      opacity: 1,
+                      x: 0,
+                      scale: 1,
+                    }
+                  : {
+                      opacity: 0,
+                      x: fromLeft ? -55 : 55,
+                      scale: 0.97,
+                    }
+              }
+              transition={{
+                duration: 0.6,
+                delay: heroFinished ? 0.12 + (i % 2) * 0.1 : 0,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              whileHover={
+                shouldReduceMotion
+                  ? undefined
+                  : {
+                      y: -5,
+                      transition: {
+                        duration: 0.2,
+                        ease: "easeOut",
+                      },
+                    }
+              }
+              whileTap={
+                shouldReduceMotion
+                  ? undefined
+                  : {
+                      scale: 0.985,
+                    }
+              }
+              onClick={() => setActiveModalIndex(i)}
+              className="
+                rounded-2xl
+                border
+                border-slate-200/80
+                bg-[#f8fafc]
+                p-4.5
+                shadow-2xs
+                hover:shadow-md
+                hover:border-slate-300
+                transition-[border-color,box-shadow]
+                duration-300
+                cursor-pointer
+                group
+                relative
+                overflow-hidden
+              "
+            >
+              {/* TOP */}
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  {/* ICON */}
+
+                  <div
+                    className="
+                      w-8
+                      h-8
+                      rounded-lg
+                      bg-white
+                      border
+                      border-slate-200
+                      flex
+                      items-center
+                      justify-center
+                      transition-all
+                      duration-200
+                      group-hover:border-slate-300
+                    "
+                  >
+                    <Icon
+                      size={16}
+                      strokeWidth={1.8}
+                      className="
+                        text-slate-800
+                        transition-transform
+                        duration-200
+                        group-hover:scale-110
+                        group-hover:-rotate-3
+                      "
+                    />
+                  </div>
+
+                  {/* TITLE */}
+
+                  <h3
+                    className="
+                      font-bold
+                      text-slate-800
+                      text-xs
+                      tracking-wide
+                      uppercase
+                      transition-colors
+                      duration-200
+                      group-hover:text-slate-950
+                    "
+                  >
+                    {card.title}
+                  </h3>
+                </div>
+
+                {/* ARROW */}
+
+                <span
+                  className="
+                    w-7
+                    h-7
+                    rounded-lg
+                    bg-[#f1f3f7]
+                    group-hover:bg-[#0b0f19]
+                    text-slate-600
+                    group-hover:text-white
+                    font-semibold
+                    text-[11px]
+                    transition-all
+                    duration-200
+                    flex
+                    items-center
+                    justify-center
+                    border
+                    border-slate-200/60
+                    group-hover:border-[#0b0f19]
+                    group-hover:-translate-y-[1px]
+                    group-hover:translate-x-[1px]
+                  "
+                >
+                  {card.badgeText}
+                </span>
               </div>
-              <span className="px-2.5 py-1 rounded-xl bg-[#f1f3f7] group-hover:bg-[#0b0f19] text-slate-700 group-hover:text-white font-semibold text-[11px] transition-all duration-200 flex items-center gap-1 border border-slate-200/60">
-                {card.badgeText}
-              </span>
-            </div>
 
-            <div className="mt-3">
-  <p className="text-lg font-bold text-slate-900 tracking-tight">
-    {card.value}
-  </p>
+              {/* VALUE */}
 
-  <p className="text-[11px] text-slate-500 mt-0.5">
-    {card.subtitle}
-  </p>
-</div>
-          </motion.div>
-        ))}
+              <div className="mt-3">
+                <p
+                  className="
+                    text-lg
+                    font-bold
+                    text-slate-900
+                    tracking-tight
+                    transition-transform
+                    duration-200
+                    origin-left
+                    group-hover:translate-x-[2px]
+                  "
+                >
+                  {card.value}
+                </p>
+
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  {card.subtitle}
+                </p>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
-      {/* Centered Modal Overlay for Expanded Details */}
+      {/* ================================
+          MODAL
+      ================================= */}
+
       <AnimatePresence>
         {activeModalIndex !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{
+              duration: 0.18,
+            }}
             onClick={() => setActiveModalIndex(null)}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/60 backdrop-blur-md"
+            className="
+              fixed
+              inset-0
+              z-50
+              flex
+              items-center
+              justify-center
+              p-4
+              sm:p-6
+              bg-slate-950/60
+              backdrop-blur-md
+            "
           >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 12 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 12 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              onClick={(e) => e.stopPropagation()}
-             className="bg-white border border-slate-200/90 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[88vh] overflow-y-auto hide-scrollbar p-6 sm:p-7 relative"
-            >
-              {/* Modal Header */}
-              <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-white border border-slate-200 flex items-center justify-center">
-  {(() => {
-    const Icon = cards[activeModalIndex].icon;
+            {/* MODAL BOX */}
 
-    return (
-      <Icon
-        size={17}
-        strokeWidth={1.8}
-        className="text-slate-900"
-      />
-    );
-  })()}
-</div>
+            <motion.div
+              initial={
+                shouldReduceMotion
+                  ? {
+                      opacity: 0,
+                    }
+                  : {
+                      scale: 0.96,
+                      opacity: 0,
+                      y: 18,
+                    }
+              }
+              animate={{
+                scale: 1,
+                opacity: 1,
+                y: 0,
+              }}
+              exit={
+                shouldReduceMotion
+                  ? {
+                      opacity: 0,
+                    }
+                  : {
+                      scale: 0.97,
+                      opacity: 0,
+                      y: 10,
+                    }
+              }
+              transition={{
+                duration: 0.25,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className="
+                bg-white
+                border
+                border-slate-200/90
+                rounded-2xl
+                shadow-2xl
+                w-full
+                max-w-4xl
+                max-h-[88vh]
+                overflow-y-auto
+                hide-scrollbar
+                p-6
+                sm:p-7
+                relative
+              "
+            >
+              {/* MODAL HEADER */}
+
+              <div
+                className="
+                  flex
+                  items-center
+                  justify-between
+                  border-b
+                  border-slate-100
+                  pb-4
+                  mb-5
+                "
+              >
+                <div className="flex items-center gap-3">
+                  {/* MODAL ICON */}
+
+                  <div
+                    className="
+                      w-9
+                      h-9
+                      rounded-lg
+                      bg-white
+                      border
+                      border-slate-200
+                      flex
+                      items-center
+                      justify-center
+                    "
+                  >
+                    {(() => {
+                      const ModalIcon = cards[activeModalIndex].icon;
+
+                      return (
+                        <ModalIcon
+                          size={17}
+                          strokeWidth={1.8}
+                          className="text-slate-900"
+                        />
+                      );
+                    })()}
+                  </div>
+
                   <div>
-                    <h3 className="font-extrabold text-slate-900 text-base sm:text-lg">
+                    <h3
+                      className="
+                        font-extrabold
+                        text-slate-900
+                        text-base
+                        sm:text-lg
+                      "
+                    >
                       {cards[activeModalIndex].title} Details
                     </h3>
+
                     <p className="text-xs text-slate-500 font-medium">
                       Interactive Overview
                     </p>
                   </div>
                 </div>
 
+                {/* CLOSE */}
+
                 <button
-  onClick={() => setActiveModalIndex(null)}
-  className="w-9 h-9 rounded-xl bg-[#f1f3f7] hover:bg-slate-800 text-slate-700 hover:text-white font-bold text-xs flex items-center justify-center transition-colors cursor-pointer border border-slate-200/60"
-  aria-label="Close modal"
->
-  ✕
-</button>
+                  onClick={() => setActiveModalIndex(null)}
+                  className="
+                    w-9
+                    h-9
+                    rounded-xl
+                    bg-[#f1f3f7]
+                    hover:bg-slate-900
+                    text-slate-700
+                    hover:text-white
+                    font-bold
+                    text-xs
+                    flex
+                    items-center
+                    justify-center
+                    transition-all
+                    duration-200
+                    cursor-pointer
+                    border
+                    border-slate-200/60
+                    hover:rotate-90
+                  "
+                  aria-label="Close modal"
+                >
+                  ✕
+                </button>
               </div>
 
-              {/* Modal Body */}
-              {cards[activeModalIndex].content}
+              {/* MODAL CONTENT */}
+
+              <motion.div
+                key={cards[activeModalIndex].id}
+                initial={
+                  shouldReduceMotion
+                    ? false
+                    : {
+                        opacity: 0,
+                        y: 8,
+                      }
+                }
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                transition={{
+                  duration: 0.3,
+                  delay: 0.06,
+                  ease: "easeOut",
+                }}
+              >
+                {cards[activeModalIndex].content}
+              </motion.div>
             </motion.div>
           </motion.div>
         )}
@@ -216,13 +568,10 @@ function LeetCodeExpanded({ data, loading }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-
       {/* Donut */}
       <div className="lg:col-span-5 flex flex-col sm:flex-row items-center justify-center gap-6 bg-[#f8fafc] p-5 rounded-2xl border border-slate-200/80">
-
         <div className="relative w-32 h-32 flex items-center justify-center flex-shrink-0">
           <svg className="w-full h-full" viewBox="0 0 100 100">
-
             {/* Background */}
             <circle
               cx="50"
@@ -326,14 +675,11 @@ function LeetCodeExpanded({ data, loading }) {
 
         {/* Difficulty */}
         <div className="flex flex-col gap-3">
-
           <div className="flex items-center gap-2.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
 
             <div>
-              <p className="text-[10px] text-slate-400 leading-none">
-                Easy
-              </p>
+              <p className="text-[10px] text-slate-400 leading-none">Easy</p>
 
               <p className="text-xs font-bold text-slate-900 mt-1">
                 {loading ? (
@@ -349,9 +695,7 @@ function LeetCodeExpanded({ data, loading }) {
             <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
 
             <div>
-              <p className="text-[10px] text-slate-400 leading-none">
-                Medium
-              </p>
+              <p className="text-[10px] text-slate-400 leading-none">Medium</p>
 
               <p className="text-xs font-bold text-slate-900 mt-1">
                 {loading ? (
@@ -367,9 +711,7 @@ function LeetCodeExpanded({ data, loading }) {
             <span className="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0" />
 
             <div>
-              <p className="text-[10px] text-slate-400 leading-none">
-                Hard
-              </p>
+              <p className="text-[10px] text-slate-400 leading-none">Hard</p>
 
               <p className="text-xs font-bold text-slate-900 mt-1">
                 {loading ? (
@@ -380,16 +722,13 @@ function LeetCodeExpanded({ data, loading }) {
               </p>
             </div>
           </div>
-
         </div>
       </div>
 
       {/* Right Side */}
       <div className="lg:col-span-7 flex flex-col gap-4">
-
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-
           {/* Global Rank */}
           <div className="p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl">
             <span className="text-[9px] text-slate-400 uppercase font-semibold tracking-wider">
@@ -429,9 +768,7 @@ function LeetCodeExpanded({ data, loading }) {
               Solving Since
             </span>
 
-            <p className="text-xs font-bold text-slate-900 mt-1">
-              2026
-            </p>
+            <p className="text-xs font-bold text-slate-900 mt-1">2026</p>
           </div>
 
           {/* Primary Language */}
@@ -440,9 +777,7 @@ function LeetCodeExpanded({ data, loading }) {
               Primary Language
             </span>
 
-            <p className="text-xs font-bold text-slate-900 mt-1">
-              Java
-            </p>
+            <p className="text-xs font-bold text-slate-900 mt-1">Java</p>
           </div>
 
           {/* Status */}
@@ -462,12 +797,10 @@ function LeetCodeExpanded({ data, loading }) {
               </p>
             </div>
           </div>
-
         </div>
 
         {/* Footer */}
         <div className="flex items-center justify-between border-t border-slate-100 pt-3 mt-1">
-
           <a
             href={`https://leetcode.com/u/${data?.handle}/`}
             target="_blank"
@@ -485,7 +818,6 @@ function LeetCodeExpanded({ data, loading }) {
           >
             View LeetCode ↗
           </a>
-
         </div>
       </div>
     </div>
@@ -495,49 +827,49 @@ function LeetCodeExpanded({ data, loading }) {
 /* 2. Projects Card Expanded Content */
 function ProjectsExpanded({ onClose }) {
   const localProjects = [
-  {
-    name: "DocFind",
-    type: "Healthcare Platform",
-    label: "Featured",
-    footer: "Team Project",
-    tech: ["React", "Node.js", "MongoDB", "AI"],
-    summary:
-      "A healthcare platform for discovering doctors, booking appointments, managing reports, and accessing AI-powered healthcare features.",
-  },
-  {
-    name: "OpenDocs",
-    type: "AI Developer Tool",
-    label: "AI Powered",
-    footer: "AI Integration",
-    tech: ["React", "Node.js", "Gemini AI", "Vite"],
-    summary:
-      "An AI-powered documentation generator that analyzes source code and helps automatically generate structured project documentation.",
-  },
-  {
-    name: "Smart Portfolio",
-    type: "Developer Portfolio",
-    label: "Personal",
-    footer: "Personal Build",
-    tech: ["Next.js", "TailwindCSS", "Framer Motion"],
-    summary:
-      "An interactive developer portfolio built around live coding activity, project showcases, developer stats, and polished dashboard experiences.",
-  },
-];
+    {
+      name: "DocFind",
+      type: "Healthcare Platform",
+      label: "Featured",
+      footer: "Team Project",
+      tech: ["React", "Node.js", "MongoDB", "AI"],
+      summary:
+        "A healthcare platform for discovering doctors, booking appointments, managing reports, and accessing AI-powered healthcare features.",
+    },
+    {
+      name: "OpenDocs",
+      type: "AI Developer Tool",
+      label: "AI Powered",
+      footer: "AI Integration",
+      tech: ["React", "Node.js", "Gemini AI", "Vite"],
+      summary:
+        "An AI-powered documentation generator that analyzes source code and helps automatically generate structured project documentation.",
+    },
+    {
+      name: "Smart Portfolio",
+      type: "Developer Portfolio",
+      label: "Personal",
+      footer: "Personal Build",
+      tech: ["Next.js", "TailwindCSS", "Framer Motion"],
+      summary:
+        "An interactive developer portfolio built around live coding activity, project showcases, developer stats, and polished dashboard experiences.",
+    },
+  ];
 
- const scrollToProjects = () => {
-  onClose();
+  const scrollToProjects = () => {
+    onClose();
 
-  setTimeout(() => {
-    const section = document.getElementById("projects");
+    setTimeout(() => {
+      const section = document.getElementById("projects");
 
-    if (section) {
-      section.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  }, 300);
-};
+      if (section) {
+        section.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 300);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -605,10 +937,10 @@ function ProjectsExpanded({ onClose }) {
 
             {/* Tiny bottom indicator */}
             <div className="pt-3 mt-4 border-t border-slate-100">
-  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-    {p.footer}
-  </span>
-</div>
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                {p.footer}
+              </span>
+            </div>
           </motion.div>
         ))}
       </div>
@@ -647,7 +979,6 @@ function EducationExpanded() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-
       {/* Left: Degree Information */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -697,10 +1028,8 @@ function EducationExpanded() {
         </div>
       </motion.div>
 
-
       {/* Right */}
       <div className="lg:col-span-7 flex flex-col justify-between">
-
         {/* Relevant Coursework */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -727,7 +1056,6 @@ function EducationExpanded() {
           </div>
         </motion.div>
 
-
         {/* Academic Profile */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -744,18 +1072,14 @@ function EducationExpanded() {
           </span>
 
           <div className="grid grid-cols-3 gap-3 mt-2.5">
-
             {/* Core Language */}
             <div className="p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl">
               <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">
                 Core Language
               </span>
 
-              <p className="text-sm font-extrabold text-slate-900 mt-1">
-                Java
-              </p>
+              <p className="text-sm font-extrabold text-slate-900 mt-1">Java</p>
             </div>
-
 
             {/* Degree Status */}
             <div className="p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl">
@@ -768,21 +1092,16 @@ function EducationExpanded() {
               </p>
             </div>
 
-
             {/* Graduation */}
             <div className="p-3 bg-[#f8fafc] border border-slate-200/80 rounded-xl">
               <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">
                 Graduation
               </span>
 
-              <p className="text-sm font-extrabold text-slate-900 mt-1">
-                2027
-              </p>
+              <p className="text-sm font-extrabold text-slate-900 mt-1">2027</p>
             </div>
-
           </div>
         </motion.div>
-
       </div>
     </div>
   );
@@ -792,6 +1111,8 @@ function EducationExpanded() {
 /* 4. Journey Card Expanded Content */
 /* 4. Journey Card Expanded Content */
 function JourneyExpanded() {
+  const shouldReduceMotion = useReducedMotion();
+
   const milestones = [
     {
       year: "2024",
@@ -851,11 +1172,32 @@ function JourneyExpanded() {
     },
   ];
 
+  const lineDuration = 1.5;
+  const firstMilestoneDelay = 0.18;
+  const milestoneGap = 0.18;
+
   return (
     <div className="flex flex-col">
-
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
+      <motion.div
+        initial={
+          shouldReduceMotion
+            ? false
+            : {
+                opacity: 0,
+                y: 8,
+              }
+        }
+        animate={{
+          opacity: 1,
+          y: 0,
+        }}
+        transition={{
+          duration: 0.35,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        className="flex items-center justify-between mb-5"
+      >
         <div>
           <p className="text-[10px] text-slate-400 font-bold tracking-wider">
             My Timeline
@@ -876,88 +1218,229 @@ function JourneyExpanded() {
             Currently Building
           </span>
         </div>
-      </div>
+      </motion.div>
 
       {/* Timeline */}
       <div className="relative">
+        {/* Background Line */}
+        <div className="absolute left-[6px] top-2 bottom-3 w-px bg-slate-100" />
 
-        {/* Vertical Line */}
-        <div className="absolute left-[6px] top-2 bottom-3 w-px bg-slate-200" />
+        {/* Animated Growing Line */}
+        <motion.div
+          initial={
+            shouldReduceMotion
+              ? false
+              : {
+                  scaleY: 0,
+                }
+          }
+          animate={{
+            scaleY: 1,
+          }}
+          transition={{
+            duration: shouldReduceMotion ? 0 : lineDuration,
+            delay: shouldReduceMotion ? 0 : 0.12,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          style={{
+            transformOrigin: "top",
+          }}
+          className="absolute left-[6px] top-2 bottom-3 w-px bg-slate-300"
+        />
 
         <div className="flex flex-col">
           {milestones.map((item, index) => {
             const isAchievement = item.type === "achievement";
             const isCurrent = item.type === "current";
 
+            const delay = firstMilestoneDelay + index * milestoneGap;
+
             return (
               <motion.div
                 key={`${item.year}-${item.title}`}
-                initial={{ opacity: 0, x: 12 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={
+                  shouldReduceMotion
+                    ? false
+                    : {
+                        opacity: 0,
+                        x: 12,
+                      }
+                }
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                }}
                 transition={{
-                  duration: 0.3,
-                  delay: index * 0.06,
-                  ease: "easeOut",
+                  duration: 0.4,
+                  delay: shouldReduceMotion ? 0 : delay,
+                  ease: [0.22, 1, 0.36, 1],
                 }}
                 className="relative pl-7 pb-4"
               >
                 {/* Timeline Dot */}
-                <div
-                  className={`absolute left-[1px] top-[5px] w-[11px] h-[11px] rounded-full border-2 border-white ring-1 ${
+                <motion.div
+                  initial={
+                    shouldReduceMotion
+                      ? false
+                      : {
+                          opacity: 0,
+                          scale: 0,
+                        }
+                  }
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                  }}
+                  transition={{
+                    duration: 0.3,
+                    delay: shouldReduceMotion ? 0 : delay,
+                    type: shouldReduceMotion ? undefined : "spring",
+                    stiffness: 350,
+                    damping: 20,
+                  }}
+                  className={`absolute left-[1px] top-[5px] w-[11px] h-[11px] rounded-full border-2 border-white ring-1 z-10 ${
                     isCurrent
                       ? "bg-emerald-500 ring-emerald-200"
                       : isAchievement
-                      ? "bg-amber-400 ring-amber-200"
-                      : "bg-slate-400 ring-slate-200"
+                        ? "bg-amber-400 ring-amber-200"
+                        : "bg-slate-400 ring-slate-200"
                   }`}
                 />
 
                 {/* Current Pulse */}
                 {isCurrent && (
-                  <span className="absolute left-[2px] top-[6px] flex h-[9px] w-[9px]">
+                  <motion.span
+                    initial={
+                      shouldReduceMotion
+                        ? false
+                        : {
+                            opacity: 0,
+                            scale: 0.5,
+                          }
+                    }
+                    animate={{
+                      opacity: 1,
+                      scale: 1,
+                    }}
+                    transition={{
+                      duration: 0.35,
+                      delay: shouldReduceMotion ? 0 : delay + 0.2,
+                      ease: "easeOut",
+                    }}
+                    className="absolute left-[2px] top-[6px] flex h-[9px] w-[9px] z-10"
+                  >
                     <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50 animate-ping" />
-                  </span>
+                  </motion.span>
                 )}
 
                 {/* Content */}
                 <div className="flex items-start gap-4">
-
                   {/* Year */}
-                  <span
+                  <motion.span
+                    initial={
+                      shouldReduceMotion
+                        ? false
+                        : {
+                            opacity: 0,
+                            y: 4,
+                          }
+                    }
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    transition={{
+                      duration: 0.3,
+                      delay: shouldReduceMotion ? 0 : delay + 0.03,
+                    }}
                     className={`w-12 flex-shrink-0 text-[10px] font-bold mt-[1px] ${
                       isCurrent
                         ? "text-emerald-600"
                         : isAchievement
-                        ? "text-amber-600"
-                        : "text-slate-400"
+                          ? "text-amber-600"
+                          : "text-slate-400"
                     }`}
                   >
                     {item.year}
-                  </span>
+                  </motion.span>
 
                   {/* Details */}
-                  <div className="flex-1 min-w-0">
-
+                  <motion.div
+                    initial={
+                      shouldReduceMotion
+                        ? false
+                        : {
+                            opacity: 0,
+                            x: 8,
+                          }
+                    }
+                    animate={{
+                      opacity: 1,
+                      x: 0,
+                    }}
+                    transition={{
+                      duration: 0.4,
+                      delay: shouldReduceMotion ? 0 : delay + 0.05,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="flex-1 min-w-0"
+                  >
                     <div className="flex items-center justify-between gap-3">
                       <h4 className="text-xs font-extrabold text-slate-900">
                         {item.title}
                       </h4>
 
                       {isAchievement && (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-[8px] font-semibold text-slate-600 uppercase tracking-wider whitespace-nowrap">
-  <Trophy
-    size={10}
-    strokeWidth={1.8}
-    className="text-slate-700"
-  />
-  2× Runner-Up
-</span>
+                        <motion.span
+                          initial={
+                            shouldReduceMotion
+                              ? false
+                              : {
+                                  opacity: 0,
+                                  scale: 0.9,
+                                }
+                          }
+                          animate={{
+                            opacity: 1,
+                            scale: 1,
+                          }}
+                          transition={{
+                            duration: 0.3,
+                            delay: shouldReduceMotion ? 0 : delay + 0.12,
+                          }}
+                          className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-[8px] font-semibold text-slate-600 uppercase tracking-wider whitespace-nowrap"
+                        >
+                          <Trophy
+                            size={10}
+                            strokeWidth={1.8}
+                            className="text-slate-700"
+                          />
+                          2× Runner-Up
+                        </motion.span>
                       )}
 
                       {isCurrent && (
-                        <span className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-100 text-[8px] font-bold text-emerald-700 uppercase tracking-wider whitespace-nowrap">
+                        <motion.span
+                          initial={
+                            shouldReduceMotion
+                              ? false
+                              : {
+                                  opacity: 0,
+                                  scale: 0.9,
+                                }
+                          }
+                          animate={{
+                            opacity: 1,
+                            scale: 1,
+                          }}
+                          transition={{
+                            duration: 0.3,
+                            delay: shouldReduceMotion ? 0 : delay + 0.12,
+                          }}
+                          className="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-100 text-[8px] font-bold text-emerald-700 uppercase tracking-wider whitespace-nowrap"
+                        >
                           Current
-                        </span>
+                        </motion.span>
                       )}
                     </div>
 
@@ -965,18 +1448,34 @@ function JourneyExpanded() {
                       {item.description}
                     </p>
 
-                    <span
+                    <motion.span
+                      initial={
+                        shouldReduceMotion
+                          ? false
+                          : {
+                              opacity: 0,
+                              y: 3,
+                            }
+                      }
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      transition={{
+                        duration: 0.3,
+                        delay: shouldReduceMotion ? 0 : delay + 0.13,
+                      }}
                       className={`inline-block mt-1.5 text-[9px] font-semibold ${
                         isCurrent
                           ? "text-emerald-600"
                           : isAchievement
-                          ? "text-amber-600"
-                          : "text-slate-400"
+                            ? "text-amber-600"
+                            : "text-slate-400"
                       }`}
                     >
                       {item.tag}
-                    </span>
-                  </div>
+                    </motion.span>
+                  </motion.div>
                 </div>
               </motion.div>
             );

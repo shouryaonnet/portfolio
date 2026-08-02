@@ -4,6 +4,9 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+.font-name {
+  font-family: var(--font-instrument-serif), Georgia, serif;
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -722,10 +725,8 @@ main {
 
 /*activity section*/
 .activity-section {
-  padding: 10px 16px 40px;
   max-width: 1600px;
   width: 94%;
-  margin: 0 auto;
 }
 
 .activity-grid {
@@ -869,10 +870,8 @@ main {
 
 /* Projects Section */
 .projects-section {
-  padding: 10px 16px 60px;
   max-width: 1600px;
   width: 94%;
-  margin: 0 auto;
 }
 
 .projects-grid {
@@ -1297,4 +1296,44 @@ main {
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* =========================================
+   GLOBAL SCROLL BEHAVIOR
+========================================= */
+
+html {
+  scroll-behavior: smooth;
+  background: white;
+}
+
+body {
+  background: white;
+  overflow-x: hidden;
+}
+
+/* Better positioning when navigating to sections */
+section[id] {
+  scroll-margin-top: 32px;
+}
+
+/* Prevent horizontal animation overflow */
+main {
+  overflow-x: clip;
+}
+
+/* Respect accessibility settings */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

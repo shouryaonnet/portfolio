@@ -1,38 +1,152 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ExternalLink, FolderGit2 } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import { projects } from "@/data/projects";
 
+/* =========================================================
+   ANIMATION VARIANTS
+========================================================= */
+
+const contentContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      delayChildren: 0.18,
+      staggerChildren: 0.07,
+    },
+  },
+};
+
+const contentItem = {
+  hidden: {
+    opacity: 0,
+    y: 8,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      ease: "easeOut",
+    },
+  },
+};
+
+const tagContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.035,
+    },
+  },
+};
+
+const tagItem = {
+  hidden: {
+    opacity: 0,
+    y: 5,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.25,
+      ease: "easeOut",
+    },
+  },
+};
+
+/* =========================================================
+   PROJECT CARD
+========================================================= */
+
 function ProjectCard({ project, index }) {
+  const shouldReduceMotion = useReducedMotion();
+
+  /*
+    Even index  -> enters from left
+    Odd index   -> enters from right
+  */
+  const direction = index % 2 === 0 ? -1 : 1;
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{
-        duration: 0.4,
-        delay: index * 0.08,
-        ease: "easeOut",
+      initial={
+        shouldReduceMotion
+          ? { opacity: 0 }
+          : {
+              opacity: 0,
+              x: direction * 38,
+              y: 8,
+            }
+      }
+      whileInView={{
+        opacity: 1,
+        x: 0,
+        y: 0,
       }}
-      whileHover={{ y: -3 }}
-      className="group bg-white border border-slate-200/90 rounded-2xl p-6 shadow-2xs hover:shadow-md hover:border-slate-300 transition-[border-color,box-shadow] duration-300 flex flex-col justify-between min-h-[330px]"
+      viewport={{
+        once: true,
+        amount: 0.18,
+      }}
+      transition={{
+        duration: 0.55,
+        delay: index * 0.08,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      whileHover={
+        shouldReduceMotion
+          ? undefined
+          : {
+              y: -4,
+            }
+      }
+      className="group bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-2xs hover:shadow-md hover:border-slate-300 transition-[border-color,box-shadow] duration-300 flex flex-col justify-between min-h-[330px] overflow-hidden"
     >
-      <div>
+      {/* =====================================================
+          MAIN CONTENT
+      ====================================================== */}
+
+      <motion.div
+        variants={contentContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{
+          once: true,
+          amount: 0.15,
+        }}
+      >
         {/* Top */}
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="flex items-center gap-3">
+        <motion.div
+          variants={contentItem}
+          className="flex items-start justify-between gap-4 mb-4"
+        >
+          <div className="flex items-center gap-3 min-w-0">
             {/* Project Icon */}
-            <div className="w-9 h-9 rounded-lg bg-[#f8fafc] border border-slate-200 flex items-center justify-center flex-shrink-0">
+            <motion.div
+              whileHover={
+                shouldReduceMotion
+                  ? undefined
+                  : {
+                      rotate: -4,
+                      scale: 1.04,
+                    }
+              }
+              transition={{
+                duration: 0.2,
+              }}
+              className="w-9 h-9 rounded-lg bg-[#f8fafc] border border-slate-200 flex items-center justify-center flex-shrink-0 group-hover:border-slate-300 transition-colors duration-300"
+            >
               <FolderGit2
                 size={17}
                 strokeWidth={1.8}
                 className="text-slate-800"
               />
-            </div>
+            </motion.div>
 
-            <div>
+            <div className="min-w-0">
               {/* Project Title */}
               <h3 className="text-[17px] font-bold text-slate-900 tracking-tight leading-tight">
                 {project.title}
@@ -40,7 +154,7 @@ function ProjectCard({ project, index }) {
 
               {/* Subtitle */}
               {project.subtitle && (
-                <p className="text-[11px] text-slate-500 font-medium mt-1">
+                <p className="text-[11px] text-slate-500 font-medium mt-1 leading-relaxed">
                   {project.subtitle}
                 </p>
               )}
@@ -51,14 +165,15 @@ function ProjectCard({ project, index }) {
           <span className="text-[11px] font-mono font-medium text-slate-400 flex-shrink-0">
             {String(index + 1).padStart(2, "0")}
           </span>
-        </div>
+        </motion.div>
 
         {/* Role + Duration */}
-        <div className="flex items-center gap-2.5 mb-4 text-[11px]">
+        <motion.div
+          variants={contentItem}
+          className="flex flex-wrap items-center gap-2.5 mb-4 text-[11px]"
+        >
           {project.role && (
-            <span className="font-semibold text-slate-700">
-              {project.role}
-            </span>
+            <span className="font-semibold text-slate-700">{project.role}</span>
           )}
 
           {project.role && project.duration && (
@@ -66,50 +181,78 @@ function ProjectCard({ project, index }) {
           )}
 
           {project.duration && (
-            <span className="text-slate-400">
-              {project.duration}
-            </span>
+            <span className="text-slate-400">{project.duration}</span>
           )}
-        </div>
+        </motion.div>
 
         {/* Description */}
-        <p className="text-[13px] sm:text-[13.5px] text-slate-600 leading-[1.7] mb-4 max-w-xl">
+        <motion.p
+          variants={contentItem}
+          className="text-[13px] sm:text-[13.5px] text-slate-600 leading-[1.7] mb-4 max-w-xl"
+        >
           {project.description}
-        </p>
+        </motion.p>
 
         {/* Project Highlights */}
         {project.highlights?.length > 0 && (
-          <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-5">
+          <motion.div
+            variants={contentItem}
+            className="flex flex-wrap gap-x-4 gap-y-1.5 mb-5"
+          >
             {project.highlights.map((item) => (
               <span
                 key={item}
                 className="text-[11px] text-slate-500 font-medium flex items-center gap-1.5"
               >
                 <span className="w-1 h-1 rounded-full bg-slate-400 flex-shrink-0" />
+
                 {item}
               </span>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {/* Tech Stack */}
-        <div className="flex flex-wrap gap-2">
+        <motion.div variants={tagContainer} className="flex flex-wrap gap-2">
           {project.tags.map((tag) => (
-            <span
+            <motion.span
               key={tag}
-              className="px-2.5 py-1 rounded-lg bg-[#f8fafc] border border-slate-200/80 text-[10.5px] font-medium text-slate-600"
+              variants={tagItem}
+              className="px-2.5 py-1 rounded-lg bg-[#f8fafc] border border-slate-200/80 text-[10.5px] font-medium text-slate-600 group-hover:border-slate-300/80 group-hover:text-slate-700 transition-colors duration-300"
             >
               {tag}
-            </span>
+            </motion.span>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      {/* Bottom */}
-      <div className="flex items-center justify-between gap-4 pt-4 mt-6 border-t border-slate-100">
+      {/* =====================================================
+          BOTTOM
+      ====================================================== */}
+
+      <motion.div
+        initial={{
+          opacity: 0,
+          y: 8,
+        }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+        }}
+        viewport={{
+          once: true,
+          amount: 0.1,
+        }}
+        transition={{
+          duration: 0.35,
+          delay: 0.42 + index * 0.06,
+          ease: "easeOut",
+        }}
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pt-4 mt-6 border-t border-slate-100"
+      >
         {/* Small Status */}
         <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+          <span className="w-1.5 h-1.5 rounded-full bg-slate-400 group-hover:bg-slate-600 transition-colors duration-300" />
 
           <span className="text-[10.5px] text-slate-400 font-medium">
             Featured Project
@@ -124,9 +267,10 @@ function ProjectCard({ project, index }) {
               href={project.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-950 text-[11px] font-medium transition-all duration-200 flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-950 hover:border-slate-300 text-[11px] font-medium transition-all duration-200 flex items-center gap-1.5"
             >
               <FaGithub className="w-[13px] h-[13px]" />
+
               <span>Source Code</span>
             </a>
           )}
@@ -144,23 +288,55 @@ function ProjectCard({ project, index }) {
               <ExternalLink
                 size={12}
                 strokeWidth={1.8}
+                className="transition-transform duration-200 group-hover:translate-x-[1px] group-hover:-translate-y-[1px]"
               />
             </a>
           )}
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
 
+/* =========================================================
+   PROJECTS SECTION
+========================================================= */
+
 export default function Projects() {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <section
       id="projects"
-      className="projects-section pt-4 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+      className="projects-section mt-10 mb-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden"
     >
-      {/* Section Header */}
-      <div className="flex items-end justify-between gap-6 mb-6">
+      {/* =====================================================
+          SECTION HEADER
+      ====================================================== */}
+
+      <motion.div
+        initial={
+          shouldReduceMotion
+            ? { opacity: 0 }
+            : {
+                opacity: 0,
+                y: 14,
+              }
+        }
+        whileInView={{
+          opacity: 1,
+          y: 0,
+        }}
+        viewport={{
+          once: true,
+          amount: 0.4,
+        }}
+        transition={{
+          duration: 0.45,
+          ease: "easeOut",
+        }}
+        className="flex items-end justify-between gap-6 mb-6"
+      >
         <div>
           <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-[0.14em] mb-1.5">
             Featured Projects
@@ -179,19 +355,40 @@ export default function Projects() {
         <span className="hidden sm:block text-[11px] text-slate-400 font-medium">
           {String(projects.length).padStart(2, "0")} Projects
         </span>
-      </div>
+      </motion.div>
 
-      {/* Divider */}
-      <div className="h-px bg-slate-200/80 mb-6" />
+      {/* =====================================================
+          DIVIDER
+      ====================================================== */}
 
-      {/* Projects Grid */}
+      <motion.div
+        initial={
+          shouldReduceMotion
+            ? false
+            : {
+                scaleX: 0,
+              }
+        }
+        whileInView={{
+          scaleX: 1,
+        }}
+        viewport={{
+          once: true,
+        }}
+        transition={{
+          duration: 0.65,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        className="h-px bg-slate-200/80 mb-6 origin-left"
+      />
+
+      {/* =====================================================
+          PROJECTS GRID
+      ====================================================== */}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {projects.map((project, index) => (
-          <ProjectCard
-            key={project.title}
-            project={project}
-            index={index}
-          />
+          <ProjectCard key={project.title} project={project} index={index} />
         ))}
       </div>
     </section>
