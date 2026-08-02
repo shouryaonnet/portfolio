@@ -1,11 +1,9 @@
 import "./globals.css";
-import ScrollProgress from "@/components/ScrollProgress";
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body>
-        <ScrollProgress />
+   <html lang="en" className="bg-white">
+     <body className="bg-white min-h-screen">
         {children}
       </body>
     </html>

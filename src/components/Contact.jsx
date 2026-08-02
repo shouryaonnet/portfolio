@@ -98,7 +98,7 @@ export default function Contact() {
     {
       name: "LinkedIn",
       username: "Shourya",
-      href: "https://linkedin.com/in/shourya",
+      href: "https://www.linkedin.com/in/shourya-gupta-2353843a6/",
       icon: FaLinkedinIn,
     },
   ];
